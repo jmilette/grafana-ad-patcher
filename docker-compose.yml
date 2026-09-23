@@ -1,0 +1,17 @@
+services:
+  grafana:
+    image: grafana/grafana:13.0.8
+    container_name: grafana
+    # No entrypoint override, no user override — this container runs exactly
+    # as the stock image does (same non-root user throughout). Only these
+    # two files differ from stock, and both are pre-generated on the host
+    # by extract-and-patch.sh, not written by the container itself.
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./patched/index.html:/usr/share/grafana/public/views/index.html:ro
+      - ./hide-ads.js:/usr/share/grafana/public/img/hide-ads.js:ro
+      - grafana-data:/var/lib/grafana
+
+volumes:
+  grafana-data:
