@@ -152,6 +152,39 @@
         }
       },
     },
+
+    // 8. Cloud-only tabs on datasource/plugin edit pages (Permissions,
+    //    Insights, Cache). The orange <Icon name="cloud" /> in the tab is only
+    //    an indicator — the tab that contains it is the thing to hide.
+    {
+      id: 'cloud-tabs',
+      run: function () {
+        var icons = document.querySelectorAll('[data-testid="icon-cloud"]');
+        for (var i = 0; i < icons.length; i++) {
+          var tab = icons[i].closest('[role="tab"]');
+          if (!tab) {
+            // Cloud glyph somewhere that isn't a tab; those spots are covered
+            // by their own rules. Fail open rather than guess.
+            continue;
+          }
+
+          hide(tab);
+
+          // The tab is a flex item inside the tab list. If it's wrapped in a
+          // single-child holder, hide that too so the list's gap doesn't leave
+          // a reserved empty slot.
+          var parent = tab.parentElement;
+          if (
+            parent &&
+            parent.children.length === 1 &&
+            parent.children[0] === tab &&
+            !parent.matches('[role="tablist"]')
+          ) {
+            hide(parent);
+          }
+        }
+      },
+    },
   ];
 
   function runAll() {
@@ -192,3 +225,4 @@
   });
   window.addEventListener('popstate', scheduleRun);
 })();
+
